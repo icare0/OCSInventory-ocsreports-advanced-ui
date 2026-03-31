@@ -32,7 +32,7 @@ $sql_field = "onKeyPress=\"return scanTouche(event,/[0-9a-zA-Z_-]/)\" onkeydown=
 		  onblur='convertToUpper(this)'";
 
 function printEnTete($ent) {
-    echo "<h3 class='text-center'>$ent</h3>";
+    echo "<h3 class='text-center' style='margin-bottom: 25px; color: var(--ocs-text-main); font-weight: 600;'><i class='fa fa-angle-double-right' style='color:var(--ocs-primary); margin-right:8px;'></i> $ent</h3>";
 }
 
 /**
@@ -87,8 +87,9 @@ function replace_entity_xml($txt) {
 }
 
 function printEnTete_tab($ent) {
-    echo "<br><table border=0 WIDTH = '62%' ALIGN = 'Center' CELLPADDING='5'>
-	<tr height=40px bgcolor=#f2f2f2 align=center><td><b>" . $ent . "</b></td></tr></table>";
+    echo '<div style="background:var(--ocs-panel-bg, #ffffff); border-top: 3px solid var(--ocs-primary); padding:10px 15px; border-radius:4px; box-shadow: 0 2px 4px var(--ocs-shadow, rgba(0,0,0,0.1)); margin: 15px auto; width: 62%; text-align: center; font-weight: 600; color: var(--ocs-text-main);">';
+    echo '<i class="fa fa-tag" style="color:var(--ocs-primary); margin-right:6px;"></i> ' . $ent;
+    echo '</div>';
 }
 
 function xml_encode($txt) {
@@ -212,6 +213,8 @@ function ajaxtab_entete_fixe($columns, $default_fields, $option = array(), $list
         }
     }
     $opt = false;
+    echo '<div class="panel" style="margin-top:20px; text-align:left; background:var(--ocs-panel-bg, #fff); border-radius:8px; box-shadow:0 4px 12px var(--ocs-shadow, rgba(0,0,0,0.05)); border:1px solid var(--ocs-border, #eee);">';
+    echo '<div class="panel-body" style="padding: 20px;">';
     ?>
 
     <div align=center>
@@ -611,6 +614,7 @@ function ajaxtab_entete_fixe($columns, $default_fields, $option = array(), $list
             </div>
         </center><?php
     }
+    echo "</div></div>"; // Ferme panel-body et panel
     return true;
 }
 

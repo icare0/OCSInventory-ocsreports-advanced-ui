@@ -93,29 +93,33 @@ if(isset($values) && $values['ivalue']['ACTIVE_NEWS'] == 1 ?? 0){
 
 }
 
-/************************************** MACHINES *****************************************************/
+/************************************** MACHINES & CONTACTED TODAY *************************************/
 
+echo '<div class="row" style="margin-top:20px;">';
+
+// 1. ALL COMPUTERS PANEL
+echo '<div class="col-md-6">';
+echo '<div class="panel">';
+echo '<div class="panel-heading">'.$l->g(1600).'</div>'; // "All Computers"
+echo '<div class="panel-body" style="padding:0 !important;">';
 $form_name = "all_machines";
 echo open_form($form_name, '', '', 'form-horizontal');
-
-$table = $console->html_table_machine("ALL COMPUTER");
-
-echo $table;
-echo "<hr>";
+echo $console->html_table_machine("ALL COMPUTER");
 echo close_form();
+echo '</div></div></div>';
 
-/************************************** MACHINE CONTACTED TODAY **************************************/
-
+// 2. CONTACTED TODAY PANEL
+echo '<div class="col-md-6">';
+echo '<div class="panel">';
+echo '<div class="panel-heading">'.$l->g(795).'</div>'; // "Contacted Today"
+echo '<div class="panel-body" style="padding:0 !important;">';
 $form_name = "console";
 echo open_form($form_name, '', '', 'form-horizontal');
-
-$table = $console->html_table_machine("CONTACTED");
-
-echo "<br><h4>".$l->g(795)."</h4><br>";
-echo $table;
-
-echo "<hr>";
+echo $console->html_table_machine("CONTACTED");
 echo close_form();
+echo '</div></div></div>';
+
+echo '</div>'; // Close row
 
 /********************************************* STATISTIC *********************************************/
 

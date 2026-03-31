@@ -51,9 +51,23 @@ function show_computer_menu($computer_id) {
 function show_computer_title($computer) {
     global $l;
 
-    echo '<h3>';
-    echo preg_replace("/[^A-Za-z0-9-_\.]/", "", $computer->NAME);
-    echo '</h3>';
+    $name = preg_replace("/[^A-Za-z0-9-_\.]/", "", $computer->NAME);
+    $ip = isset($computer->IPADDR) ? $computer->IPADDR : 'N/A';
+    $os = isset($computer->OSNAME) ? $computer->OSNAME : 'N/A';
+    $last = isset($computer->LASTCOME) ? $computer->LASTCOME : 'N/A';
+
+    echo '<div class="panel" style="background: linear-gradient(to right, var(--ocs-secondary), #35384e); color: white; border: none !important;">';
+    echo '<div class="panel-body" style="display:flex; align-items:center;">';
+    echo '<i class="fa fa-desktop" style="font-size: 40px; color: var(--ocs-primary); margin-right: 25px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;"></i>';
+    echo '<div style="flex-grow: 1;">';
+    echo '<h2 style="margin: 0 0 5px 0; font-weight: 700; color:white;">' . $name . '</h2>';
+    echo '<div style="font-size: 14px; opacity: 0.8;">';
+    if ($ip != 'N/A') echo '<span style="margin-right:15px;"><i class="fa fa-globe"></i> ' . $ip . '</span>';
+    if ($os != 'N/A') echo '<span style="margin-right:15px;"><i class="fa fa-windows"></i> ' . $os . '</span>';
+    if ($last != 'N/A') echo '<span><i class="fa fa-clock-o"></i> ' . $last . '</span>';
+    echo '</div>';
+    echo '</div>';
+    echo '<div style="text-align: right;">';
 }
 
 function show_computer_actions($computer){
@@ -62,31 +76,30 @@ function show_computer_actions($computer){
 
     $urls = $_SESSION['OCS']['url_service'];
 
-    echo '<div style="text-align: center"> ';
-
     if ($_SESSION['OCS']['profile']->getRestriction('EXPORT_XML', 'NO') == "NO") {
-        echo ' <button class= "btn btn-action" onclick=\'location.href="index.php?' . PAG_INDEX . '=' . $urls->getUrl('ms_export_ocs') . '&no_header=1&systemid=' . $computer->ID . '";\' target="_blank">' . $l->g(1304) . '</button>';
+        echo '<button class="btn btn-default" style="background: rgba(255,255,255,0.1); color:white; border:none; margin-bottom:5px; margin-right:5px;" onclick=\'location.href="index.php?' . PAG_INDEX . '=' . $urls->getUrl('ms_export_ocs') . '&no_header=1&systemid=' . $computer->ID . '";\' target="_blank"><i class="fa fa-download"></i> ' . $l->g(1304) . '</button>';
     }
-    echo '</h3>';
-    echo "&nbsp;&nbsp;";
 
     if ($_SESSION['OCS']['profile']->getRestriction('WOL', 'NO') == "NO" && isset($protectedGet['cat']) && $protectedGet['cat'] == 'admin') {
-        echo "<button class='btn btn-action' OnClick='confirme(\"\",\"WOL\",\"bandeau\",\"WOL\",\"" . $l->g(1283) . "\");'>WOL</button> ";
+        echo "<button class='btn btn-default' style='background: rgba(255,255,255,0.1); color:white; border:none; margin-bottom:5px; margin-right:5px;' OnClick='confirme(\"\",\"WOL\",\"bandeau\",\"WOL\",\"" . $l->g(1283) . "\");'><i class='fa fa-bolt'></i> WOL</button>";
     }
 
-    echo "&nbsp;&nbsp;";
-
-    // archive btn -> if computer already archived : restore, else : archive
     if ($_SESSION['OCS']['profile']->getConfigValue('ARCHIVE_COMPUTERS') == "YES" && isset($protectedGet['cat']) && $protectedGet['cat'] == 'admin') {
         $archive = new ArchiveComputer();
         if (mysqli_num_rows($archive->isArchived($computer->ID)) != 0) {
             $archive_action = $l->g(1552);
+            $color = '#4CAF50';
+            $icon = 'fa-undo';
         } else {
             $archive_action = $l->g(1551);
+            $color = '#e53935';
+            $icon = 'fa-archive';
         }
-        echo "<button class='btn btn-action' OnClick='confirme(\"\",\"". $archive_action ."\",\"bandeau\",\"ARCHIVE\",\"Do you want to ". strtolower($archive_action) ." this computer ?\");'>". strtoupper($archive_action)."</button> ";
+        echo "<button class='btn btn-danger' style='background: ".$color."; border:none; margin-bottom:5px;' OnClick='confirme(\"\",\"". $archive_action ."\",\"bandeau\",\"ARCHIVE\",\"Do you want to ". strtolower($archive_action) ." this computer ?\");'><i class='fa ".$icon."'></i> ". strtoupper($archive_action)."</button>";
     }
-    echo "</div>";
+    
+    echo '</div>'; // ferme la div des boutons
+    echo '</div></div>'; // ferme panel-body et panel
 }
 
 function show_computer_summary($computer) {
@@ -216,8 +229,11 @@ function show_summary($data, $labels, $cat_labels, $links = array()) {
         }
 
         echo '<div class="col col-md-6">';
-        echo '<h5>' . mb_strtoupper($cat_labels[$cat_key]) . '</h5>';
-
+        echo '<div class="plugin-frame">';
+        echo '<h4 style="margin-top:0; margin-bottom:15px; font-weight:600; color:var(--ocs-text-main);"><i class="fa fa-info-circle text-muted"></i> ' . mb_strtoupper($cat_labels[$cat_key]) . '</h4>';
+        echo '<table class="summary">';
+        
+        $col_index = 0;
         foreach ($cat as $name => $label) {
             $value = isset($data[$name])? $data[$name] : '';
 
@@ -225,23 +241,32 @@ function show_summary($data, $labels, $cat_labels, $links = array()) {
                 if (!array_key_exists($name, $links)) {
                     $value = strip_tags_array($value);
                 }
-
                 if ($name == "IPADDR") {
                     $value = preg_replace('/([x0-9])\//', '$1 / ', $value);
                 }
 
+                if ($col_index % 2 == 0) echo '<tr class="summary-row">';
+                
+                echo '<td class="summary-cell">';
                 echo '<span class="summary-header text-left">' . $label . ' :</span>';
                 echo '<span class="summary-value text-left">' . $value . '</span>';
+                echo '</td>';
+                
+                if ($col_index % 2 == 1) echo '</tr>';
+                $col_index++;
             }
         }
-        echo '</div>';
+        if ($col_index > 0 && $col_index % 2 != 0) echo '<td class="summary-cell"></td></tr>'; // ferme la ligne impaire
+        
+        echo '</table>';
+        echo '</div>'; // ferme plugin-frame
+        echo '</div>'; // ferme col-md-6
 
         $i++;
         if ($i % $nb_col == 0) {
             echo '</div>';
         }
     }
-
 }
 
 ?>
