@@ -52,9 +52,8 @@ function show_package_form($data, $errors) {
 
     echo '</div>';
 
-    // TODO labels
     echo '<div class="form-buttons">';
-    show_form_submit('create_package', 'Create package');
+    show_form_submit('create_package', $l->g(13));
     echo '</div>';
 
     echo close_form();
