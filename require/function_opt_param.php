@@ -102,7 +102,7 @@ function optperso($lbl, $lblPerso, $helpText, $optPerso, $default_value = '', $e
                     echo $l->g(488). " (".$default_value;
                 }
 
-                if(isset($end)){
+                if($end != ''){
                     echo " ".$end;
                 }
                 if(!isset($optPerso[$lbl])){
