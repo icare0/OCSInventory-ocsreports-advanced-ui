@@ -24,7 +24,6 @@
 function show_package_form($data, $errors) {
     global $l;
 
-    // @TODO translations
     echo '<h3>' . $l->g(435) . '</h3>';
 
     echo open_form('create_pack', '', 'enctype="multipart/form-data"');
