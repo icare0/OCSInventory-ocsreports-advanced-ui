@@ -238,7 +238,7 @@ function show_user_messages_frame($data, $errors) {
         'type' => 'checkbox',
         'value' => $data['NEED_DONE_ACTION']
     ));
-    show_form_label('NEED_DONE_ACTION', 'Post-execution text'); // TODO translation
+    show_form_label('NEED_DONE_ACTION', $l->g(453));
 
     echo '</h4>';
 
